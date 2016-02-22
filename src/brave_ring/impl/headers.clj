@@ -1,6 +1,6 @@
 (ns brave-ring.impl.headers)
 
-(def ^:const trace-id "X-B3-TraceId")
-(def ^:const span-id "X-B3-SpanId")
-(def ^:const parent-span-id "X-B3-ParentSpanId")
-(def ^:const sampled "X-B3-SAMPLED")
+(def ^:const trace-id "x-b3-traceid")
+(def ^:const span-id "x-b3-spanid")
+(def ^:const parent-span-id "x-b3-parentspanid")
+(def ^:const sampled "x-b3-sampled")

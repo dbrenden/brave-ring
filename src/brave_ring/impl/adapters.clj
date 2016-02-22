@@ -26,7 +26,8 @@
                 (if (and trace-id span-id)
                   (.. (TraceData/builder)
                       (sample true)
-                      (spanId (get-span-id trace-id span-id parent-span-id)))
+                      (spanId (get-span-id trace-id span-id parent-span-id))
+                      build)
                   (.. (TraceData/builder)
                     build))))))
   (^String getSpanName [_]
