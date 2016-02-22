@@ -9,7 +9,7 @@
                  (IdConversion/convertToLong span-id)
                  (when parent-span-id (IdConversion/convertToLong parent-span-id))))
 
-(deftype RingServerRequestAdapter [request span-name-provider]
+(deftype RingServerRequestAdapter [request get-span-name]
   ServerRequestAdapter
   (^TraceData getTraceData [_]
     (let [headers (:headers request)
@@ -30,7 +30,7 @@
                   (.. (TraceData/builder)
                     build))))))
   (^String getSpanName [_]
-    (span-name-provider request))
+    (get-span-name request))
   (^Collection requestAnnotations [_]
     (Collections/emptyList)))
 
@@ -43,7 +43,7 @@
   (^Collection responseAnnotations [_]
     (let [status (:status response)]
       (if (or (< status 200) (> status 299))
-        (Arrays/asList (KeyValueAnnotation/create "http.responsecode" (str status)))
+        [(KeyValueAnnotation/create "http.responsecode" (str status))]
         Collections/EMPTY_LIST))))
 
 (defn ring-server-response-adapter

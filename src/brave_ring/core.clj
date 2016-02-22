@@ -4,10 +4,10 @@
   (:import [com.github.kristofa.brave Brave$Builder Brave]))
 
 (defn ring-server-request-adapter
-  ([request span-provider-fn]
-   (adapters/ring-server-request-adapter request (span-provider-fn)))
+  ([request span-name-provider]
+   (adapters/ring-server-request-adapter request span-name-provider))
   ([request]
-   (adapters/ring-server-request-adapter request (snp/default-span-name-provider-fn))))
+   (ring-server-request-adapter request (snp/default-span-name-provider-fn))))
 
 (defn ring-server-response-adapter
   [response]
