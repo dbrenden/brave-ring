@@ -15,15 +15,15 @@
     (let [headers (:headers request)
           sampled (get headers headers/sampled)]
       (cond
-        (or (not sampled)) (.. (TraceData/builder)
-                               build)
+        (not sampled) (.. (TraceData/builder)
+                          build)
         (or (= "0" sampled) (= "false" sampled))  (.. (TraceData/builder)
                                                       (sample false)
                                                       build)
         :else (let [trace-id (get headers headers/trace-id)
                     span-id (get headers headers/span-id)
                     parent-span-id (get headers headers/parent-span-id)]
-                (if (or trace-id span-id)
+                (if (and trace-id span-id)
                   (.. (TraceData/builder)
                       (sample true)
                       (spanId (get-span-id trace-id span-id parent-span-id)))
