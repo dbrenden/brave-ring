@@ -13,21 +13,21 @@
   [response]
   (adapters/ring-server-response-adapter response))
 
-(def brave-singleton ^Brave
+(def brave-singleton
   (memoize
    (fn []
      (.. (Brave$Builder.)
          build))))
 
 (defn brave-middleware
-  [handler]
-  (fn [request]
-    (let [brave (brave-singleton)
-          server-request-interceptor (.serverRequestInterceptor ^Brave brave)
-          request-adapter (ring-server-request-adapter request)]
-      (.handle server-request-interceptor request-adapter)
-      (let [response (handler request)
-            server-response-interceptor (.serverResponseInterceptor ^Brave brave)
-            response-adapter (ring-server-response-adapter response)]
-        (.handle server-response-interceptor response-adapter)
-        response))))
+  ([] (brave-middleware (brave-singleton)))
+  ([handler ^Brave brave]
+   (fn [request]
+     (let [server-request-interceptor (.serverRequestInterceptor ^Brave brave)
+           request-adapter (ring-server-request-adapter request)]
+       (.handle server-request-interceptor request-adapter)
+       (let [response (handler request)
+             server-response-interceptor (.serverResponseInterceptor ^Brave brave)
+             response-adapter (ring-server-response-adapter response)]
+         (.handle server-response-interceptor response-adapter)
+         response)))))
