@@ -33,17 +33,16 @@
   (^String getSpanName [_]
     (get-span-name request))
   (^Collection requestAnnotations [_]
-    (let [{:keys [uri query-string server-port server-name remote-addr schema protocol content-type]
-           :or {query-string ""
-                content-type ""}} request]
-      (mapv #(KeyValueAnnotation/create (first %) (second %)) [["http.uri" uri]
-                                                               ["http.query-string" query-string]
-                                                               ["http.server-port" server-port]
-                                                               ["http.server-name" server-name]
-                                                               ["http.remote-addr" remote-addr]
-                                                               ["http.schema" schema]
-                                                               ["http.protocol" protocol]
-                                                               ["http.content-type" content-type]]))))
+    (let [{:keys [uri query-string server-port server-name remote-addr scheme protocol content-type]} request]
+      (mapv #(KeyValueAnnotation/create (first %) (str (or (second %) "none"))) [["http.uri" uri]
+                                                                                 ["http.query-string" query-string]
+                                                                                 ["http.server-port" server-port]
+                                                                                 ["http.server-name" server-name]
+                                                                                 ["http.remote-addr" remote-addr]
+                                                                                 ["http.scheme" scheme]
+                                                                                 ["http.protocol" protocol]
+                                                                                 ["http.content-type" content-type]]))))
+
 
 (defn ring-server-request-adapter
   [request span-provider]
