@@ -36,14 +36,14 @@
     (let [{:keys [uri query-string server-port server-name remote-addr schema protocol content-type]
            :or {query-string ""
                 content-type ""}} request]
-      (mapv #(KeyValueAnnotation/create (first %2) (second %2)) [["http.uri" uri]
-                                                                 ["http.query-string" query-string]
-                                                                 ["http.server-port" server-port]
-                                                                 ["http.server-name" server-name]
-                                                                 ["http.remote-addr" remote-addr]
-                                                                 ["http.schema" schema]
-                                                                 ["http.protocol" protocol]
-                                                                 ["http.content-type" content-type]]))))
+      (mapv #(KeyValueAnnotation/create (first %) (second %)) [["http.uri" uri]
+                                                               ["http.query-string" query-string]
+                                                               ["http.server-port" server-port]
+                                                               ["http.server-name" server-name]
+                                                               ["http.remote-addr" remote-addr]
+                                                               ["http.schema" schema]
+                                                               ["http.protocol" protocol]
+                                                               ["http.content-type" content-type]]))))
 
 (defn ring-server-request-adapter
   [request span-provider]
