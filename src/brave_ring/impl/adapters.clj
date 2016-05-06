@@ -51,9 +51,7 @@
   ServerResponseAdapter
   (^Collection responseAnnotations [_]
     (let [status (:status response)]
-      (if (or (< status 200) (> status 299))
-        [(KeyValueAnnotation/create "http.responsecode" (str status))]
-        Collections/EMPTY_LIST))))
+      [(KeyValueAnnotation/create "http.responsecode" (str status))])))
 
 (defn ring-server-response-adapter
   [response]
