@@ -39,10 +39,9 @@
                                                                                  ["http.server-port" server-port]
                                                                                  ["http.server-name" server-name]
                                                                                  ["http.remote-addr" remote-addr]
-                                                                                 ["http.scheme" scheme]
+                                                                                 ["http.scheme" (name scheme)]
                                                                                  ["http.protocol" protocol]
                                                                                  ["http.content-type" content-type]]))))
-
 
 (defn ring-server-request-adapter
   [request span-provider]
