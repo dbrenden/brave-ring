@@ -1,6 +1,6 @@
 (ns brave-ring.impl.adapters
   (:require [brave-ring.impl.headers :as headers])
-  (:import [com.github.kristofa.brave KeyValueAnnotation ServerRequestAdapter ServerResponseAdapter TraceData SpanId IdConversion]
+  (:import [com.github.kristofa.brave ServerRequestAdapter ServerResponseAdapter TraceData SpanId IdConversion]
            [java.util Collection Collections Arrays]))
 
 (defn get-span-id
@@ -9,7 +9,7 @@
                  (IdConversion/convertToLong span-id)
                  (when parent-span-id (IdConversion/convertToLong parent-span-id))))
 
-(deftype RingServerRequestAdapter [request get-span-name]
+(deftype RingServerRequestAdapter [request get-span-name request-annotations-fn]
   ServerRequestAdapter
   (^TraceData getTraceData [_]
     (let [headers (:headers request)
@@ -33,26 +33,17 @@
   (^String getSpanName [_]
     (get-span-name request))
   (^Collection requestAnnotations [_]
-    (let [{:keys [uri query-string server-port server-name remote-addr scheme protocol content-type]} request]
-      (mapv #(KeyValueAnnotation/create (first %) (str (or (second %) "none"))) [["http.uri" uri]
-                                                                                 ["http.query-string" query-string]
-                                                                                 ["http.server-port" server-port]
-                                                                                 ["http.server-name" server-name]
-                                                                                 ["http.remote-addr" remote-addr]
-                                                                                 ["http.scheme" (name scheme)]
-                                                                                 ["http.protocol" protocol]
-                                                                                 ["http.content-type" content-type]]))))
+    (request-annotations-fn request)))
 
 (defn ring-server-request-adapter
-  [request span-provider]
-  (RingServerRequestAdapter. request span-provider))
+  [request span-provider request-annotations-fn]
+  (RingServerRequestAdapter. request span-provider request-annotations-fn))
 
-(deftype RingResponseAdapter [response]
+(deftype RingResponseAdapter [response response-annotations-fn]
   ServerResponseAdapter
   (^Collection responseAnnotations [_]
-    (let [status (:status response)]
-      [(KeyValueAnnotation/create "http.responsecode" (str status))])))
+    (response-annotations-fn response)))
 
 (defn ring-server-response-adapter
-  [response]
-  (RingResponseAdapter. response))
+  [response response-annotations-fn]
+  (RingResponseAdapter. response response-annotations-fn))
