@@ -1,4 +1,4 @@
-(defproject brave-ring "1.1.0-SNAPSHOT"
+(defproject brave-ring "1.1.0"
   :description "Brave (zipkin) middleware for ring"
   :url "http://github.com/dbrenden/brave-ring"
   :license {:name "Eclipse Public License"
